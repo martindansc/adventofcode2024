@@ -8,7 +8,7 @@ fn read_input() -> Result<String, Box<dyn Error>> {
     return Ok(text);
 }
 
-fn add_mults_in_text(text: &String, regex: &Regex) -> Result<(isize), Box<dyn Error>> {
+fn add_mults_in_text(text: &String, regex: &Regex) -> Result<isize, Box<dyn Error>> {
     let mut sum = 0;
 
     let captured: regex::CaptureMatches<'_, '_> = regex.captures_iter(text);
@@ -52,5 +52,5 @@ pub fn day3b() -> Result<(), Box<dyn Error>> {
         sum += add_mults_in_text(&donts[0].to_string(), &re)?;
     }
 
-    return print_output("day3a".to_string(), sum);
+    return print_output("day3b".to_string(), sum);
 }

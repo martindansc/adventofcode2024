@@ -1,4 +1,4 @@
-use crate::helpers::output::print_output;
+use crate::helpers::{direction::Direction, output::print_output, position::Position};
 use regex::Regex;
 use std::{collections::VecDeque, error::Error, fs::read_to_string};
 
@@ -26,7 +26,7 @@ fn read_input() -> Result<Vec<VecDeque<String>>, Box<dyn Error>> {
 fn find_next_letter(
     matrix: Vec<VecDeque<String>>,
     letter: String,
-) -> impl Iterator<Item = (isize, isize)> {
+) -> impl Iterator<Item = Position> {
     let mut i = 0;
 
     let row_len = matrix[i].len();
@@ -36,7 +36,7 @@ fn find_next_letter(
             let row = &matrix[i / row_len];
             let j = i % row_len;
             if row[j] == letter {
-                let result = Some(((i / row_len) as isize, j as isize));
+                let result = Some(Position::new((i / row_len) as isize, j as isize));
                 i += 1;
                 return result;
             }
@@ -48,77 +48,63 @@ fn find_next_letter(
     });
 }
 
-fn add_direction_to_position(
-    position: (isize, isize),
-    direction: &(isize, isize),
-) -> (isize, isize) {
-    let mut new_position = position.clone();
-    new_position.0 += direction.0;
-    new_position.1 += direction.1;
-    return new_position;
-}
-
 fn check_word_direction(
     matrix: &Vec<VecDeque<String>>,
-    mut position: (isize, isize),
-    direction: &(isize, isize),
+    mut position: Position,
+    direction: &Direction,
     word: &Vec<&str>,
 ) -> bool {
     let row_len = matrix[0].len();
 
     for step in 0..word.len() {
-        if position.0 < 0 || position.1 < 0 {
+        if position.x < 0 || position.y < 0 {
             return false;
         }
 
-        if position.0 >= matrix.len() as isize || position.1 >= row_len as isize {
+        if position.x >= matrix.len() as isize || position.y >= row_len as isize {
             return false;
         }
 
-        let character = &matrix[position.0 as usize][position.1 as usize];
+        let character = &matrix[position.x as usize][position.y as usize];
 
         if character != word[step] {
             return false;
         }
 
-        position = add_direction_to_position(position, direction);
+        position = position.add(direction)
     }
 
     return true;
 }
 
-fn check_word(matrix: &Vec<VecDeque<String>>, position: (isize, isize)) -> isize {
+fn check_word(matrix: &Vec<VecDeque<String>>, position: Position) -> isize {
     let word = vec!["X", "M", "A", "S"];
     let mut sum = 0;
-    for i in -1..2 {
-        for j in -1..2 {
-            if check_word_direction(matrix, position.clone(), &(i, j), &word) {
-                sum += 1
-            }
+
+    for dir in Direction::all() {
+        if check_word_direction(matrix, position.clone(), &dir, &word) {
+            sum += 1
         }
     }
 
     return sum;
 }
 
-fn check_x(matrix: &Vec<VecDeque<String>>, position: (isize, isize)) -> isize {
+fn check_x(matrix: &Vec<VecDeque<String>>, position: Position) -> isize {
     let mut sum = 0;
 
     let word = vec!["M", "A", "S"];
 
-    for i in -1..2 {
-        for j in -1..2 {
-            if i == 0 || j == 0 {
-                continue;
-            }
+    for dir in Direction::all() {
+        if dir.i == 0 || dir.j == 0 {
+            continue;
+        }
 
-            let direction = (i, j);
-            let op_direction = (i * -1, j * -1);
-            let new_position = add_direction_to_position(position, &op_direction);
+        let op_direction = dir.opposite();
+        let new_position = position.add(&op_direction);
 
-            if check_word_direction(matrix, new_position, &direction, &word) {
-                sum += 1
-            }
+        if check_word_direction(matrix, new_position, &dir, &word) {
+            sum += 1
         }
     }
 

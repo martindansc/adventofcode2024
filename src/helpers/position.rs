@@ -1,16 +1,12 @@
 use super::direction::Direction;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Position {
     pub x: isize,
     pub y: isize,
 }
 
 impl Position {
-    pub fn new(x: isize, y: isize) -> Self {
-        Self { x, y }
-    }
-
     pub fn add(&self, dir: &Direction) -> Self {
         Self {
             x: self.x + dir.i,

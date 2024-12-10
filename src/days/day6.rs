@@ -1,26 +1,21 @@
 use std::{collections::HashSet, error::Error};
 
-use crate::helpers::{
-    direction::Direction,
-    map::Map,
-    output::print_output,
-    position::{self, Position},
-};
+use crate::helpers::{direction::Direction, map::Map, output::print_output, position::Position};
 
 pub fn count_until_out_of_map(
     map: &Map<String>,
     starting_position: &Position,
 ) -> (bool, isize, HashSet<Position>) {
     let mut sum: isize = 1;
-    let mut current_position = starting_position.clone();
-    let mut current_direction = Direction::NORTH();
+    let mut current_position: Position = starting_position.clone();
+    let mut current_direction: Direction = Direction::NORTH();
 
     let mut visited: HashSet<Position> = HashSet::new();
     let mut visited_directions_positions: HashSet<(Direction, Position)> = HashSet::new();
     visited.insert(current_position.clone());
 
     loop {
-        let next_position = current_position.add(&current_direction);
+        let next_position: Position = current_position.add(&current_direction);
 
         match map.get_cell(&next_position) {
             Some(value) => {
@@ -29,7 +24,8 @@ pub fn count_until_out_of_map(
                 } else {
                     current_position = next_position;
 
-                    let direction_position = (current_direction.clone(), current_position.clone());
+                    let direction_position: (Direction, Position) =
+                        (current_direction.clone(), current_position.clone());
 
                     if visited_directions_positions.contains(&direction_position) {
                         return (false, 0, visited);
@@ -53,13 +49,13 @@ pub fn day6a() -> Result<(), Box<dyn Error>> {
     let input_file = "day6a";
     let map: Map<String> = Map::read_input(&input_file)?;
 
-    let starting_position = map
+    let starting_position: Position = map
         .clone()
         .find_next("^".to_string())
         .next()
         .expect("'^' should be present in input");
 
-    let sum = count_until_out_of_map(&map, &starting_position);
+    let sum: (bool, isize, HashSet<Position>) = count_until_out_of_map(&map, &starting_position);
 
     return print_output("day6a".to_string(), sum.1);
 }
@@ -69,18 +65,20 @@ pub fn day6b() -> Result<(), Box<dyn Error>> {
     let input_file = "day6a";
     let mut map: Map<String> = Map::read_input(&input_file)?;
 
-    let starting_position = map
+    let starting_position: Position = map
         .clone()
         .find_next("^".to_string())
         .next()
         .expect("'^' should be present in input");
 
-    let initial = count_until_out_of_map(&map, &starting_position);
+    let initial: (bool, isize, HashSet<Position>) =
+        count_until_out_of_map(&map, &starting_position);
 
-    let mut sum = 0;
+    let mut sum: isize = 0;
     for possible_position in initial.2 {
         map.set_cell(&possible_position, &"#".to_string());
-        let possible = count_until_out_of_map(&map, &starting_position);
+        let possible: (bool, isize, HashSet<Position>) =
+            count_until_out_of_map(&map, &starting_position);
 
         if !possible.0 {
             sum += 1

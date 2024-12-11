@@ -20,7 +20,9 @@ pub fn count_until_out_of_map(
         match map.get_cell(&next_position) {
             Some(value) => {
                 if *value == "#".to_string() {
-                    current_direction = current_direction.rotate_right(2);
+                    current_direction = current_direction
+                        .rotate_right(2)
+                        .expect("Should be basic directions");
                 } else {
                     current_position = next_position;
 

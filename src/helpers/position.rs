@@ -13,4 +13,11 @@ impl Position {
             y: self.y + dir.j,
         }
     }
+
+    pub fn direction_to(&self, position: &Position) -> Direction {
+        return Direction {
+            i: position.x - self.x,
+            j: position.y - self.y,
+        };
+    }
 }

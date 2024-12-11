@@ -68,6 +68,22 @@ impl<T: FromStr + PartialEq + Clone> Map<T> {
         return Some(&self.matrix[position.x as usize][position.y as usize]);
     }
 
+    pub fn get_position_i(&self, i: isize) -> Position {
+        let column_len = self.get_column_len();
+
+        let position = Position {
+            x: i / column_len,
+            y: i % column_len,
+        };
+
+        return position;
+    }
+
+    pub fn get_cell_i(&self, i: isize) -> Option<&T> {
+        let position = self.get_position_i(i);
+        return self.get_cell(&position);
+    }
+
     pub fn set_cell(&mut self, position: &Position, value: &T) {
         self.matrix[position.x as usize][position.y as usize] = value.clone();
     }
@@ -97,5 +113,33 @@ impl<T: FromStr + PartialEq + Clone> Map<T> {
 
             return None;
         });
+    }
+}
+
+pub struct MapIterator<'a, T: FromStr + PartialEq + Clone> {
+    map: &'a Map<T>,
+    index: isize,
+}
+
+impl<'a, T: FromStr + PartialEq + Clone> Iterator for MapIterator<'a, T> {
+    type Item = (Position, &'a T);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let next_position = self.map.get_position_i(self.index);
+        let next_value = self.map.get_cell(&next_position)?;
+        self.index += 1;
+        return Some((next_position, next_value));
+    }
+}
+
+impl<'a, T: FromStr + PartialEq + Clone> IntoIterator for &'a Map<T> {
+    type Item = (Position, &'a T);
+    type IntoIter = MapIterator<'a, T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        return MapIterator {
+            map: self,
+            index: 0,
+        };
     }
 }

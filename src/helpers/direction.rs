@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use super::{cmath::gcd, position::Position};
+use super::cmath::gcd;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Direction {

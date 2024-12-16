@@ -8,3 +8,5 @@ pub mod map;
 pub mod output;
 #[cfg(test)]
 pub mod position;
+#[cfg(test)]
+pub mod region;

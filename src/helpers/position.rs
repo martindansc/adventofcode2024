@@ -20,4 +20,8 @@ impl Position {
             j: position.y - self.y,
         };
     }
+
+    pub fn distance_to_manhattan(&self, p: &Position) -> isize {
+        return (p.x - self.x).abs() + (p.y - self.y).abs();
+    }
 }

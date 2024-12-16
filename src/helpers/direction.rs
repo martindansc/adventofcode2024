@@ -38,7 +38,7 @@ impl Direction {
         return Direction::EAST().opposite();
     }
 
-    pub fn NORTH_WEAST() -> Self {
+    pub fn NORTH_WEST() -> Self {
         return Direction::SOUTH_EAST().opposite();
     }
 
@@ -55,8 +55,19 @@ impl Direction {
             Direction::SOUTH(),
             Direction::SOUTH_WEST(),
             Direction::WEST(),
-            Direction::NORTH_WEAST(),
+            Direction::NORTH_WEST(),
             Direction::ZERO(),
+        ];
+
+        return ret;
+    }
+
+    pub fn manhattan() -> Vec<Direction> {
+        let ret: Vec<Direction> = vec![
+            Direction::NORTH(),
+            Direction::EAST(),
+            Direction::SOUTH(),
+            Direction::WEST(),
         ];
 
         return ret;

@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use std::str::FromStr;
 use std::{collections::VecDeque, error::Error, fs::read_to_string};
 
@@ -6,13 +7,17 @@ use super::position::Position;
 #[derive(Clone, Debug)]
 pub struct Map<T>
 where
-    T: FromStr + PartialEq + Clone,
+    T: FromStr + PartialEq + Clone + Debug,
 {
     pub matrix: Vec<VecDeque<T>>,
 }
 
-impl<T: FromStr + PartialEq + Clone> Map<T> {
+impl<T: FromStr + PartialEq + Clone + Debug> Map<T> {
     pub fn read_input(test_name: &str) -> Result<Self, Box<dyn Error>> {
+        return Self::read_input_pop(test_name, true);
+    }
+
+    pub fn read_input_pop(test_name: &str, need_pop: bool) -> Result<Self, Box<dyn Error>> {
         let input_file = "inputs/".to_owned() + test_name + ".txt";
 
         let mut matrix: Vec<VecDeque<T>> = Vec::new();
@@ -24,7 +29,9 @@ impl<T: FromStr + PartialEq + Clone> Map<T> {
                 .flat_map(|x| x.parse::<T>())
                 .collect();
 
-            row.pop_front();
+            if need_pop {
+                row.pop_front();
+            }
 
             matrix.push(row);
         }
@@ -96,10 +103,7 @@ impl<T: FromStr + PartialEq + Clone> Map<T> {
 
         return std::iter::from_fn(move || {
             while i < column_len * row_len {
-                let position = Position {
-                    x: i / column_len,
-                    y: i % column_len,
-                };
+                let position = self.get_position_i(i);
 
                 let value = self.get_cell(&position).unwrap();
                 if *value == item {
@@ -116,12 +120,12 @@ impl<T: FromStr + PartialEq + Clone> Map<T> {
     }
 }
 
-pub struct MapIterator<'a, T: FromStr + PartialEq + Clone> {
+pub struct MapIterator<'a, T: FromStr + PartialEq + Clone + Debug> {
     map: &'a Map<T>,
     index: isize,
 }
 
-impl<'a, T: FromStr + PartialEq + Clone> Iterator for MapIterator<'a, T> {
+impl<'a, T: FromStr + PartialEq + Clone + Debug> Iterator for MapIterator<'a, T> {
     type Item = (Position, &'a T);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -132,7 +136,7 @@ impl<'a, T: FromStr + PartialEq + Clone> Iterator for MapIterator<'a, T> {
     }
 }
 
-impl<'a, T: FromStr + PartialEq + Clone> IntoIterator for &'a Map<T> {
+impl<'a, T: FromStr + PartialEq + Clone + Debug> IntoIterator for &'a Map<T> {
     type Item = (Position, &'a T);
     type IntoIter = MapIterator<'a, T>;
 

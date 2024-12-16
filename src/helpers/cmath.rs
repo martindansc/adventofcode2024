@@ -10,3 +10,8 @@ pub fn gcd(mut n: usize, mut m: usize) -> usize {
     }
     n
 }
+
+pub fn n_digits(val: isize) -> isize {
+    let digits = (val as f64).log(10.0) as isize + 1;
+    return digits;
+}

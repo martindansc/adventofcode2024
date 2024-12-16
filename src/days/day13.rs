@@ -1,17 +1,14 @@
 use regex::Regex;
 
-use eqsolver::{
-    multivariable::MultiVarNewtonFD,
-    nalgebra::{self, Matrix2x1, Vector2},
-};
-use nalgebra::{vector, Matrix2};
+use eqsolver::nalgebra::{self, Matrix2x1};
+use nalgebra::Matrix2;
 
 use crate::helpers::output::print_output;
 use std::{error::Error, fs::read_to_string};
 
 fn read_input(
     add: isize,
-) -> Result<(Vec<(isize, isize, isize, isize, isize, isize)>), Box<dyn Error>> {
+) -> Result<Vec<(isize, isize, isize, isize, isize, isize)>, Box<dyn Error>> {
     let input_file = "inputs/day13a.txt";
 
     let mut res: Vec<(isize, isize, isize, isize, isize, isize)> = Vec::new();
@@ -43,19 +40,6 @@ fn read_input(
 
 pub fn solve(formula: (isize, isize, isize, isize, isize, isize)) -> Option<(isize, isize)> {
     let (x1, y1, x2, y2, x3, y3) = formula;
-    /* let f = |v: Vector2<f64>| {
-        vector![
-            x1 as f64 * v[0] + x2 as f64 * v[1] - x3 as f64,
-            y1 as f64 * v[0] + y2 as f64 * v[1] - y3 as f64,
-        ]
-    };
-
-    let solution = MultiVarNewtonFD::new(f).solve(vector![50., 50.]);
-
-    println!("sol: {:?}", solution);
-
-    let a = (*solution.as_ref().unwrap().get(0).unwrap()).round() as isize;
-    let b = (*solution.as_ref().unwrap().get(1).unwrap()).round() as isize; */
 
     let matrix = Matrix2::new(x1 as f64, x2 as f64, y1 as f64, y2 as f64);
 

@@ -14,6 +14,13 @@ impl Position {
         }
     }
 
+    pub fn add_wrap(&self, dir: &Direction, max_x: isize, max_y: isize) -> Self {
+        Self {
+            x: (self.x + dir.i).rem_euclid(max_x),
+            y: (self.y + dir.j).rem_euclid(max_y),
+        }
+    }
+
     pub fn direction_to(&self, position: &Position) -> Direction {
         return Direction {
             i: position.x - self.x,

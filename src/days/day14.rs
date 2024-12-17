@@ -109,7 +109,6 @@ pub fn day14b() -> Result<(), Box<dyn Error>> {
 
         if new_max > max {
             max = new_max;
-            println!("i={:?}, max={:?}", _i, max);
             last_id = _i;
         }
     }

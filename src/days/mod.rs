@@ -13,6 +13,8 @@ pub mod day13;
 #[cfg(test)]
 pub mod day14;
 #[cfg(test)]
+pub mod day15;
+#[cfg(test)]
 pub mod day2;
 #[cfg(test)]
 pub mod day3;

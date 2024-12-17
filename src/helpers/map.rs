@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::fmt::{Debug, Display};
 use std::str::FromStr;
 use std::{collections::VecDeque, error::Error, fs::read_to_string};
 
@@ -7,12 +7,28 @@ use super::position::Position;
 #[derive(Clone, Debug)]
 pub struct Map<T>
 where
-    T: FromStr + PartialEq + Clone + Debug,
+    T: FromStr + PartialEq + Clone + Debug + Display,
 {
     pub matrix: Vec<VecDeque<T>>,
 }
 
-impl<T: FromStr + PartialEq + Clone + Debug> Map<T> {
+impl<T: FromStr + PartialEq + Clone + Debug + Display> Map<T> {
+    pub fn new(size_x: isize, size_y: isize, def: T) -> Self {
+        let mut matrix: Vec<VecDeque<T>> = Vec::new();
+
+        for _i in 0..size_x {
+            let mut row: VecDeque<T> = VecDeque::new();
+
+            for _j in 0..size_y {
+                row.push_back(def.clone());
+            }
+
+            matrix.push(row);
+        }
+
+        return Self { matrix };
+    }
+
     pub fn read_input(test_name: &str) -> Result<Self, Box<dyn Error>> {
         return Self::read_input_pop(test_name, true);
     }
@@ -118,14 +134,26 @@ impl<T: FromStr + PartialEq + Clone + Debug> Map<T> {
             return None;
         });
     }
+
+    pub fn print(&self) {
+        for row in &self.matrix {
+            for cell in row {
+                print!("{:}", cell);
+            }
+
+            println!();
+        }
+
+        println!();
+    }
 }
 
-pub struct MapIterator<'a, T: FromStr + PartialEq + Clone + Debug> {
+pub struct MapIterator<'a, T: FromStr + PartialEq + Clone + Debug + Display> {
     map: &'a Map<T>,
     index: isize,
 }
 
-impl<'a, T: FromStr + PartialEq + Clone + Debug> Iterator for MapIterator<'a, T> {
+impl<'a, T: FromStr + PartialEq + Clone + Debug + Display> Iterator for MapIterator<'a, T> {
     type Item = (Position, &'a T);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -136,7 +164,7 @@ impl<'a, T: FromStr + PartialEq + Clone + Debug> Iterator for MapIterator<'a, T>
     }
 }
 
-impl<'a, T: FromStr + PartialEq + Clone + Debug> IntoIterator for &'a Map<T> {
+impl<'a, T: FromStr + PartialEq + Clone + Debug + Display> IntoIterator for &'a Map<T> {
     type Item = (Position, &'a T);
     type IntoIter = MapIterator<'a, T>;
 
